@@ -1,12 +1,12 @@
 <?php 
 class PDOConfig extends PDO
 { 
-    private $engine; 
-    private $host; 
-    private $database; 
-    private $user; 
-    private $pass;
-    private $charset; 
+    protected $engine; 
+    protected $host; 
+    protected $database; 
+    protected $user; 
+    protected $pass;
+    protected $charset; 
     
     public function __construct($db,$user,$pw)
     { 

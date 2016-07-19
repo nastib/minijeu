@@ -4,7 +4,7 @@
 <html>
     <head>
         <meta charset='utf8'/>
-        <title>Mini jeu de combats</title>
+        <title>Mini jeu de combat - Version 2</title>
     </head>
     <body>
         <fieldset>
@@ -12,7 +12,7 @@
        <?php    
             if($manager->count() > 0)
             {
-            echo '<p> Nombre de personnages créés : '.$manager->count();
+            echo '<p> Nombre de personnages créés : '.$manager->count() .'</p>';
             }
             if(isset($perso))
             {
@@ -27,17 +27,49 @@
                 <fieldset>
                     <legend> Mes informations </legend>
                     <p>
+                      Type : <?=ucfirst($perso->type())?><br/>
                       Nom : <?= $perso->nom() ?> <br/>
                       Dégats : <?= $perso->degats() ?>
+                      <?php
+                      switch($perso->type())
+                      {
+                        case 'magicien' :
+                            echo 'magie : ';
+                            break;
+                        case 'guerrier' :
+                            echo 'Protection : ';
+                            break;
+                      }
+                      echo $perso->atout();
+                      ?>
                     </p> 
                 </fieldset>
                 <fieldset>
                     <legend> Qui frapper ? </legend>
                     <?php
-                      $persos = $manager->getList($perso->nom());
+                    $persos = $manager->getList($perso->nom());
+                    if (empty($persos))
+                    {
+                        echo 'Personne à frapper !';
+                    } else
+                    {
+                      if ($perso->estEndormi())
+                      {
+                        echo 'Un magicien vous a endormi ! Vous allez vous reveiller dans ', $perso->reveil(),'.';
+                      } else
+                      {
+                      
                       foreach($persos as $pers)
                       {
-                        echo '<a  href=index.php?nom='.$pers->nom().'&frapper=frapper>'.$pers->nom().'</a>'.' (dégats : '.$pers->degats().' ) <br/>';
+                        echo '<a  href="?frapper='.$pers->id().'">'.htmlspecialchars($pers->nom()).'</a>',' (dégats : ', $pers->degats(),' | type : ', $pers->type(), ')';
+                        //on joute un lien pour un sort si le personnage est un magicien
+                        if($perso->type() =='magicien')
+                        {
+                        echo '| <a href="?ensorceler=', $pers->id(),'">', 'lancer un sort ,</a>';
+                        }
+                        echo '<br/>';
+                      }
+                      }
                       }
                     ?>
                 </fieldset>
@@ -48,8 +80,15 @@
             {?>
                 <form method='post' action='index.php'>
                     <label for='nom'><input type='text' name='nom' maxlength=50 /></label>
-                    <p><input type='submit' value='creer' name='creer' />
+                    
                     <input type='submit' value='utiliser' name='utiliser'/></p>
+                    <p>Type :
+                    <select name ="type">
+                        <option value='magicien'> Magicien </option>
+                        <option value='guerrier'> Guerrier </option>
+                    </select>
+                    <input type='submit' value='creer' name='creer' />
+                    </p>
                 </form  
             <?php
             }
